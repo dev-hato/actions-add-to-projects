@@ -1,0 +1,35 @@
+---
+name: update-gitleaks
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - closed
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-gitleaks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.0.2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v3.4.1
+        with:
+          cache: npm
+      - name: Install packages
+        run: npm ci --prefer-offline
+      - uses: dev-hato/actions-update-gitleaks@v0.0.12
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          repo-name: ${{ github.event.pull_request.head.repo.full_name }}

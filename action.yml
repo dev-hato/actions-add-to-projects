@@ -1,0 +1,26 @@
+name: 'add-to-projects'
+author: 'dev-hato Development Team'
+description: 'PRやIssueをGitHub Projectsに追加する'
+inputs:
+  github_app_id:
+    description: 'GitHub App ID'
+    required: true
+  github_app_private_key:
+    description: 'GitHub App Private Key'
+    required: true
+  project-url:
+    description: 'GitHub Projects URL'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Generate token
+      id: generate_token
+      uses: tibdex/github-app-token@v1.6.0
+      with:
+        app_id: ${{ inputs.github_app_id }}
+        private_key: ${{ inputs.github_app_private_key }}
+    - uses: actions/add-to-project@v0.3.0
+      with:
+        project-url: ${{ inputs.project-url }}
+        github-token: ${{ steps.generate_token.outputs.token }}
