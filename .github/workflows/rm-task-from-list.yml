@@ -21,10 +21,26 @@ jobs:
           result-encoding: string
           script: |
             const res = await github.graphql(`
-              query{
-                organization(login: "dev-hato"){
+              query {
+                organization(login: "dev-hato") {
                   projectV2(number: 1) {
                     id
+                    fields(first:20) {
+                      nodes {
+                        ... on ProjectV2Field {
+                          id
+                          name
+                        }
+                        ... on ProjectV2SingleSelectField {
+                          id
+                          name
+                          options {
+                            id
+                            name
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }
