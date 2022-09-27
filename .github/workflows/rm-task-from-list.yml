@@ -24,10 +24,7 @@ jobs:
               query{
                 organization(login: 'dev-hato'){
                   projectV2(number: 1) {
-                    nodes {
-                      id
-                      title
-                    }
+                    id
                   }
                 }
               }
