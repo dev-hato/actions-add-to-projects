@@ -20,7 +20,16 @@ jobs:
           github-token: ${{ steps.generate_token.outputs.token }}
           result-encoding: string
           script: |
-            const res = await github.rest.projects.listForOrg({
-              org: 'dev-hato',
-            });
-            console.log(res.data)
+            const res = await github.graphql(`
+              query{
+                organization(login: 'dev-hato'){
+                  projectV2(number: 1) {
+                    nodes {
+                      id
+                      title
+                    }
+                  }
+                }
+              }
+            `)
+            console.log(res)
