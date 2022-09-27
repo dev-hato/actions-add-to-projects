@@ -1,0 +1,26 @@
+name: Remove Tasks from Task List
+
+on:
+  pull_request:
+
+jobs:
+  rm-task-from-list:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate token
+        id: generate_token
+        uses: tibdex/github-app-token@v1.6.0
+        with:
+          app_id: ${{ secrets.PROJECT_AUTOMATION_APP_ID }}
+          private_key: ${{ secrets.PROJECT_AUTOMATION_PRIVATE_KEY }}
+      - name: Get latest App Engine support version
+        id: get_latest_app_engine_support_version
+        uses: actions/github-script@v6.2.0
+        with:
+          github-token: ${{ steps.generate_token.outputs.token }}
+          result-encoding: string
+          script: |
+            const res = await github.rest.projects.listForOrg({
+              org: 'dev-hato',
+            });
+            console.log(res.data)
