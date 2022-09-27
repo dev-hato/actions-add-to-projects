@@ -22,7 +22,7 @@ jobs:
           script: |
             const res = await github.graphql(`
               query{
-                organization(login: 'dev-hato'){
+                organization(login: "dev-hato"){
                   projectV2(number: 1) {
                     id
                   }
