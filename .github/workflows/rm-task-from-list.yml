@@ -13,7 +13,7 @@ jobs:
         with:
           app_id: ${{ secrets.PROJECT_AUTOMATION_APP_ID }}
           private_key: ${{ secrets.PROJECT_AUTOMATION_PRIVATE_KEY }}
-      - name: Get latest App Engine support version
+      - name: Remove item
         id: get_latest_app_engine_support_version
         uses: actions/github-script@v6.2.0
         with:
@@ -21,28 +21,12 @@ jobs:
           result-encoding: string
           script: |
             const res = await github.graphql(`
-              query {
-                organization(login: "dev-hato") {
-                  projectV2(number: 1) {
-                    id
-                    fields(first:20) {
-                      nodes {
-                        ... on ProjectV2Field {
-                          id
-                          name
-                        }
-                        ... on ProjectV2SingleSelectField {
-                          id
-                          name
-                          options {
-                            id
-                            name
-                          }
-                        }
-                      }
-                    }
-                  }
+              mutation {
+                deleteProjectV2Item(
+                  input: {projectId: "PVT_kwDOBA3ISc4AA7Xf", itemId: "PR_kwDOFOeQdc49uKuq"}
+                ) {
+                  deletedItemId
                 }
               }
             `)
-            console.log(res.organization.projectV2.fields)
+            console.log(res)
