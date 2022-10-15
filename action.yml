@@ -39,8 +39,8 @@ runs:
 
             let afterQuery = ""
 
-            if (itemCursor === undefined) {
-              afterQuery = ", after: \"${itemCursor}\""
+            if (itemCursor !== undefined) {
+              afterQuery = `, after: "${itemCursor}"`
             }
 
             const getProjectV2ItemsQuery = `
