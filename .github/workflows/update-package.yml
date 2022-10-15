@@ -20,15 +20,15 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@v3.1.0
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
-      - uses: actions/setup-node@v3.4.1
+      - uses: actions/setup-node@v3.5.1
         with:
           cache: npm
       - run: npm install
-      - uses: dev-hato/actions-diff-pr-management@v1.0.4
+      - uses: dev-hato/actions-diff-pr-management@v1.0.6
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           branch-name-prefix: fix-package
