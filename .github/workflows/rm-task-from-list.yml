@@ -21,12 +21,38 @@ jobs:
           result-encoding: string
           script: |
             const res = await github.graphql(`
-              mutation {
-                deleteProjectV2Item(
-                  input: {projectId: "PVT_kwDOBA3ISc4AA7Xf", itemId: "PVTI_lADOBA3ISc4AA7XfzgCM0TQ"}
-                ) {
-                  deletedItemId
+              {
+                organization(login: "dev-hato") {
+                  projectV2(number: 1) {
+                    id
+                    items(first: 50) {
+                      totalCount
+                      pageInfo {
+                        hasNextPage
+                        endCursor
+                      }
+                      nodes {
+                        id
+                        content {
+                          ... on PullRequest {
+                            url
+                            closed
+                          }
+                          ... on Issue {
+                            url
+                            closed
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             `)
-            console.log(res)
+            console.log(res.organization.projectV2.id)
+            console.log(res.organization.projectV2.items.totalCount)
+            for (const item of res.organization.projectV2.items.nodes) {
+              console.log(item.id)
+              console.log(item.content.url)
+              console.log(item.content.closed)
+            }
