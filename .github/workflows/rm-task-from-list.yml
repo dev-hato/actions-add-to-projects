@@ -23,7 +23,7 @@ jobs:
             const res = await github.graphql(`
               mutation {
                 deleteProjectV2Item(
-                  input: {projectId: "PVT_kwDOBA3ISc4AA7Xf", itemId: "PR_kwDOFOeQdc49uKuq"}
+                  input: {projectId: "PVT_kwDOBA3ISc4AA7Xf", itemId: "PVTI_lADOBA3ISc4AA7XfzgCM0TQ"}
                 ) {
                   deletedItemId
                 }
