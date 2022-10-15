@@ -1,2 +1,2 @@
-# actions-add-to-projects
+# actions-add-to-projectsっっf
 PRやIssueをGitHub Projectsに追加するためのAction。
