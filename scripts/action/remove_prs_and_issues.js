@@ -1,5 +1,5 @@
 module.exports = async ({github}) => {
-    const projectData = '${{ inputs.project-url }}'.match(/https:\/\/github.com\/orgs\/([^\/]+)\/projects\/([^\/]+)/)
+    const projectData = process.env.PROJECT_URL.match(/https:\/\/github.com\/orgs\/([^\/]+)\/projects\/([^\/]+)/)
     let itemCursor = undefined;
 
     for (let i = 0; i < 3; i++) {

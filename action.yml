@@ -22,6 +22,8 @@ runs:
         private_key: ${{ inputs.github_app_private_key }}
     - name: Remove pull requests and issues from project
       uses: actions/github-script@v6.3.3
+      env:
+        PROJECT_URL: ${{ inputs.project-url }}
       with:
         github-token: ${{ steps.generate_token.outputs.token }}
         script: |
