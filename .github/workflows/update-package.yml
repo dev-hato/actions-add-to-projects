@@ -33,7 +33,6 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           branch-name-prefix: fix-package
           pr-title-prefix: package.jsonやpackage-lock.jsonを直してあげたよ！
-          repo-name: ${{ github.event.pull_request.head.repo.full_name }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
