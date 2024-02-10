@@ -14,8 +14,13 @@ jobs:
     if: github.repository == github.event.pull_request.head.repo.full_name
     steps:
       - uses: actions/checkout@v4.1.1
+      - name: Generate a token
+        id: generate_token
+        uses: actions/create-github-app-token@v1.7.0
+        with:
+          app-id: ${{ secrets.PROJECT_AUTOMATION_APP_ID }}
+          private-key: ${{ secrets.PROJECT_AUTOMATION_PRIVATE_KEY }}
       - uses: ./
         with:
-          github_app_id: ${{ secrets.PROJECT_AUTOMATION_APP_ID }}
-          github_app_private_key: ${{ secrets.PROJECT_AUTOMATION_PRIVATE_KEY }}
+          github-token: ${{ steps.generate_token.outputs.token }}
           project-url: https://github.com/orgs/dev-hato/projects/1

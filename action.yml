@@ -2,11 +2,8 @@ name: 'add-to-projects'
 author: 'dev-hato Development Team'
 description: 'PRやIssueをGitHub Projectsに追加する'
 inputs:
-  github_app_id:
-    description: 'GitHub App ID'
-    required: true
-  github_app_private_key:
-    description: 'GitHub App Private Key'
+  github-token: # id of input
+    description: 'GITHUB_TOKEN'
     required: true
   project-url:
     description: 'GitHub Projects URL'
@@ -14,22 +11,16 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Generate token
-      id: generate_token
-      uses: tibdex/github-app-token@v2.1.0
-      with:
-        app_id: ${{ inputs.github_app_id }}
-        private_key: ${{ inputs.github_app_private_key }}
     - name: Remove pull requests and issues from project
       uses: actions/github-script@v7.0.1
       env:
         PROJECT_URL: ${{ inputs.project-url }}
       with:
-        github-token: ${{ steps.generate_token.outputs.token }}
+        github-token: ${{ inputs.github-token }}
         script: |
           const script = require('${{ github.action_path }}/scripts/action/remove_prs_and_issues.js')
           await script({github})
     - uses: actions/add-to-project@v0.5.0
       with:
         project-url: ${{ inputs.project-url }}
-        github-token: ${{ steps.generate_token.outputs.token }}
+        github-token: ${{ inputs.github-token }}
