@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == github.event.pull_request.head.repo.full_name
     steps:
-      - uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v4.1.2
       - name: Generate a token
         id: generate_token
         uses: actions/create-github-app-token@v1.9.0
