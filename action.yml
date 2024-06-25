@@ -20,7 +20,7 @@ runs:
         script: |
           const script = require('${{ github.action_path }}/scripts/action/remove_prs_and_issues.js')
           await script({github})
-    - uses: actions/add-to-project@v1.0.1
+    - uses: actions/add-to-project@v1.0.2
       with:
         project-url: ${{ inputs.project-url }}
         github-token: ${{ inputs.github-token }}
