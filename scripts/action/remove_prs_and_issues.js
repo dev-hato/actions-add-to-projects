@@ -1,20 +1,22 @@
 module.exports = async ({ github }) => {
-  const projectData = process.env.PROJECT_URL.match(/https:\/\/github.com\/orgs\/([^/]+)\/projects\/([^/]+)/)
-  let itemCursor
+  const projectData = process.env.PROJECT_URL.match(
+    /https:\/\/github.com\/orgs\/([^/]+)\/projects\/([^/]+)/,
+  );
+  let itemCursor;
 
   for (let i = 0; i < 3; i++) {
-    let itemNum
+    let itemNum;
 
     if (i === 0) {
-      itemNum = 50
+      itemNum = 50;
     } else {
-      itemNum = 10
+      itemNum = 10;
     }
 
-    let afterQuery = ''
+    let afterQuery = "";
 
     if (itemCursor !== undefined) {
-      afterQuery = `, after: "${itemCursor}"`
+      afterQuery = `, after: "${itemCursor}"`;
     }
 
     const getProjectV2ItemsQuery = `
@@ -45,29 +47,29 @@ module.exports = async ({ github }) => {
             }
           }
         }
-        `
-    console.log(getProjectV2ItemsQuery)
-    const projectV2Items = await github.graphql(getProjectV2ItemsQuery)
-    const projectV2 = projectV2Items.organization.projectV2
-    const items = projectV2.items
+        `;
+    console.log(getProjectV2ItemsQuery);
+    const projectV2Items = await github.graphql(getProjectV2ItemsQuery);
+    const projectV2 = projectV2Items.organization.projectV2;
+    const items = projectV2.items;
 
     if (items.totalCount < 1200) {
-      return
+      return;
     }
 
-    const closedItems = items.nodes.filter(v => v.content.closed)
+    const closedItems = items.nodes.filter((v) => v.content.closed);
 
     if (closedItems.length === 0) {
-      const pageInfo = items.pageInfo
+      const pageInfo = items.pageInfo;
       if (pageInfo.hasNextPage) {
-        itemCursor = pageInfo.endCursor
-        continue
+        itemCursor = pageInfo.endCursor;
+        continue;
       } else {
-        return
+        return;
       }
     }
 
-    const item = closedItems[0]
+    const item = closedItems[0];
     const deleteItemFromProjectQuery = `
         mutation {
           deleteProjectV2Item(
@@ -76,10 +78,10 @@ module.exports = async ({ github }) => {
             deletedItemId
           }
         }
-        `
-    console.log(item.content.url)
-    console.log(deleteItemFromProjectQuery)
-    console.log(await github.graphql(deleteItemFromProjectQuery))
-    return
+        `;
+    console.log(item.content.url);
+    console.log(deleteItemFromProjectQuery);
+    console.log(await github.graphql(deleteItemFromProjectQuery));
+    return;
   }
-}
+};
