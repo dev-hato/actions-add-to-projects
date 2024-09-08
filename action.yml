@@ -1,12 +1,12 @@
-name: 'add-to-projects'
-author: 'dev-hato Development Team'
-description: 'PRやIssueをGitHub Projectsに追加する'
+name: "add-to-projects"
+author: "dev-hato Development Team"
+description: "PRやIssueをGitHub Projectsに追加する"
 inputs:
   github-token: # id of input
-    description: 'GITHUB_TOKEN'
+    description: "GITHUB_TOKEN"
     required: true
   project-url:
-    description: 'GitHub Projects URL'
+    description: "GitHub Projects URL"
     required: true
 runs:
   using: "composite"
