@@ -4,9 +4,9 @@ import {
   generateGetProjectV2ItemsQuery,
 } from "../../../src/remove_prs_and_issues";
 
-export async function script(){
+export async function script() {
   const getProjectV2ItemsQueryErrors = validate(
-      generateGetProjectV2ItemsQuery("dev-hato", "1", 50, "hoge"),
+    generateGetProjectV2ItemsQuery("dev-hato", "1", 50, "hoge"),
   );
 
   if (0 < getProjectV2ItemsQueryErrors.length) {
@@ -14,7 +14,7 @@ export async function script(){
   }
 
   const deleteItemFromProjectQueryErrors = validate(
-      generateDeleteItemFromProjectQuery("fuga", "piyo"),
+    generateDeleteItemFromProjectQuery("fuga", "piyo"),
   );
 
   if (0 < deleteItemFromProjectQueryErrors.length) {
