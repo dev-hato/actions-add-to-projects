@@ -1,63 +1,6 @@
 import type { GitHub } from "@actions/github/lib/utils";
 import type { Organization } from "@octokit/graphql-schema";
-
-export function generateGetProjectV2ItemsQuery(
-  login: string,
-  number: string,
-  first: number,
-  after?: string,
-): string {
-  const itemParams = [`first: ${first}`];
-
-  if (after !== undefined) {
-    itemParams.push(`after: "${after}"`);
-  }
-
-  return `
-        {
-          organization(login: "${login}") {
-            projectV2(number: ${number}) {
-              id
-              items(${itemParams.join(", ")}) {
-                totalCount
-                pageInfo {
-                  hasNextPage
-                  endCursor
-                }
-                nodes {
-                  id
-                  content {
-                    ... on PullRequest {
-                      url
-                      closed
-                    }
-                    ... on Issue {
-                      url
-                      closed
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        `;
-}
-
-export function generateDeleteItemFromProjectQuery(
-  projectID: string,
-  itemID: string,
-): string {
-  return `
-        mutation {
-          deleteProjectV2Item(
-            input: {projectId: "${projectID}", itemId: "${itemID}"}
-          ) {
-            deletedItemId
-          }
-        }
-        `;
-}
+import { validate } from "@octokit/graphql-schema";
 
 export async function script(github: InstanceType<typeof GitHub>) {
   const projectURL = process.env.PROJECT_URL;
@@ -83,13 +26,48 @@ export async function script(github: InstanceType<typeof GitHub>) {
       itemNum = 50;
     }
 
-    const getProjectV2ItemsQuery = generateGetProjectV2ItemsQuery(
-      projectData[1],
-      projectData[2],
-      itemNum,
-      itemCursor,
-    );
+    let afterQuery = "";
+
+    if (itemCursor !== undefined) {
+      afterQuery = `, after: "${itemCursor}"`;
+    }
+
+    const getProjectV2ItemsQuery = `
+        {
+          organization(login: "${projectData[1]}") {
+            projectV2(number: ${projectData[2]}) {
+              id
+              items(first: ${itemNum}${afterQuery}) {
+                totalCount
+                pageInfo {
+                  hasNextPage
+                  endCursor
+                }
+                nodes {
+                  id
+                  content {
+                    ... on PullRequest {
+                      url
+                      closed
+                    }
+                    ... on Issue {
+                      url
+                      closed
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        `;
     console.log(getProjectV2ItemsQuery);
+    const getProjectV2ItemsQueryErrors = validate(getProjectV2ItemsQuery);
+
+    if (0 < getProjectV2ItemsQueryErrors.length) {
+      throw getProjectV2ItemsQueryErrors[0];
+    }
+
     const {
       organization: { projectV2 },
     } = await github.graphql<{ organization: Organization }>(
@@ -133,11 +111,24 @@ export async function script(github: InstanceType<typeof GitHub>) {
       }
 
       console.log(content.url);
-      const deleteItemFromProjectQuery = generateDeleteItemFromProjectQuery(
-        projectV2.id,
-        item.id,
-      );
+      const deleteItemFromProjectQuery = `
+        mutation {
+          deleteProjectV2Item(
+            input: {projectId: "${projectV2.id}", itemId: "${item.id}"}
+          ) {
+            deletedItemId
+          }
+        }
+        `;
       console.log(deleteItemFromProjectQuery);
+      const deleteItemFromProjectQueryErrors = validate(
+        deleteItemFromProjectQuery,
+      );
+
+      if (0 < deleteItemFromProjectQueryErrors.length) {
+        throw deleteItemFromProjectQueryErrors[0];
+      }
+
       console.log(await github.graphql(deleteItemFromProjectQuery));
       return;
     }
