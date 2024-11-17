@@ -17442,7 +17442,9 @@ async function script(github) {
     /https:\/\/github.com\/orgs\/([^/]+)\/projects\/([^/]+)/
   );
   if (projectData === null || projectData.length < 3) {
-    throw new Error("PROJECT_URL format is invalid.");
+    throw new Error(
+      `PROJECT_URL format is invalid. projectData: ${JSON.stringify(projectData)}`
+    );
   }
   let itemCursor = void 0;
   for (let i = 0; i < 3; i++) {
