@@ -23,9 +23,12 @@ __export(remove_prs_and_issues_exports, {
   script: () => script
 });
 module.exports = __toCommonJS(remove_prs_and_issues_exports);
+function isString(s) {
+  return s !== void 0;
+}
 async function script(github) {
   const projectURL = process.env.PROJECT_URL;
-  if (projectURL === void 0) {
+  if (!isString(projectURL)) {
     throw new Error("PROJECT_URL must set.");
   }
   const projectData = projectURL.match(
@@ -41,7 +44,7 @@ async function script(github) {
       itemNum = 50;
     }
     let afterQuery = "";
-    if (itemCursor !== void 0) {
+    if (!isString(itemCursor)) {
       afterQuery = `, after: "${itemCursor}"`;
     }
     const getProjectV2ItemsQuery = `
@@ -121,7 +124,7 @@ async function script(github) {
     if (!hasNextPage) {
       return;
     }
-    if (endCursor === void 0 || endCursor === null) {
+    if (endCursor === null || !isString(endCursor)) {
       throw new Error("endCursor must set.");
     }
     itemCursor = endCursor;
