@@ -1,10 +1,14 @@
 import type { GitHub } from "@actions/github/lib/utils";
 import type { Organization } from "@octokit/graphql-schema";
 
+function isString(s?: string): s is string {
+  return s !== undefined;
+}
+
 export async function script(github: InstanceType<typeof GitHub>) {
   const projectURL = process.env.PROJECT_URL;
 
-  if (projectURL === undefined) {
+  if (!isString(projectURL)) {
     throw new Error("PROJECT_URL must set.");
   }
 
@@ -27,7 +31,7 @@ export async function script(github: InstanceType<typeof GitHub>) {
 
     let afterQuery = "";
 
-    if (itemCursor !== undefined) {
+    if (!isString(itemCursor)) {
       afterQuery = `, after: "${itemCursor}"`;
     }
 
@@ -122,7 +126,7 @@ export async function script(github: InstanceType<typeof GitHub>) {
       return;
     }
 
-    if (endCursor === undefined || endCursor === null) {
+    if (endCursor === null || !isString(endCursor)) {
       throw new Error("endCursor must set.");
     }
 
