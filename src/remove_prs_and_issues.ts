@@ -1,6 +1,5 @@
 import type { GitHub } from "@actions/github/lib/utils";
 import type { Organization } from "@octokit/graphql-schema";
-import { validate } from "@octokit/graphql-schema";
 
 export async function script(github: InstanceType<typeof GitHub>) {
   const projectURL = process.env.PROJECT_URL;
@@ -26,10 +25,10 @@ export async function script(github: InstanceType<typeof GitHub>) {
       itemNum = 50;
     }
 
-    let afterQuery = "";
+    const itemParams = [`first: ${itemNum}`];
 
     if (itemCursor !== undefined) {
-      afterQuery = `, after: "${itemCursor}"`;
+      itemParams.push(`after: "${itemCursor}"`);
     }
 
     const getProjectV2ItemsQuery = `
@@ -37,7 +36,7 @@ export async function script(github: InstanceType<typeof GitHub>) {
           organization(login: "${projectData[1]}") {
             projectV2(number: ${projectData[2]}) {
               id
-              items(first: ${itemNum}${afterQuery}) {
+              items(${itemParams.join(", ")}) {
                 totalCount
                 pageInfo {
                   hasNextPage
@@ -62,12 +61,6 @@ export async function script(github: InstanceType<typeof GitHub>) {
         }
         `;
     console.log(getProjectV2ItemsQuery);
-    const getProjectV2ItemsQueryErrors = validate(getProjectV2ItemsQuery);
-
-    if (0 < getProjectV2ItemsQueryErrors.length) {
-      throw getProjectV2ItemsQueryErrors[0];
-    }
-
     const {
       organization: { projectV2 },
     } = await github.graphql<{ organization: Organization }>(
@@ -121,14 +114,6 @@ export async function script(github: InstanceType<typeof GitHub>) {
         }
         `;
       console.log(deleteItemFromProjectQuery);
-      const deleteItemFromProjectQueryErrors = validate(
-        deleteItemFromProjectQuery,
-      );
-
-      if (0 < deleteItemFromProjectQueryErrors.length) {
-        throw deleteItemFromProjectQueryErrors[0];
-      }
-
       console.log(await github.graphql(deleteItemFromProjectQuery));
       return;
     }
