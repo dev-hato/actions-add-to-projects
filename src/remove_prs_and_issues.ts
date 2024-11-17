@@ -14,7 +14,9 @@ export async function script(github: InstanceType<typeof GitHub>) {
   );
 
   if (projectData === null || projectData.length < 3) {
-    throw new Error(`PROJECT_URL format is invalid. projectData: ${JSON.stringify(projectData)}`);
+    throw new Error(
+      `PROJECT_URL format is invalid. projectData: ${JSON.stringify(projectData)}`,
+    );
   }
 
   let itemCursor: string | undefined = undefined;
