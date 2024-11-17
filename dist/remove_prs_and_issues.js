@@ -40,16 +40,16 @@ async function script(github) {
     if (i === 0) {
       itemNum = 50;
     }
-    const itemParams = [`first: ${itemNum}`];
+    let afterQuery = "";
     if (itemCursor !== void 0) {
-      itemParams.push(`after: "${itemCursor}"`);
+      afterQuery = `, after: "${itemCursor}"`;
     }
     const getProjectV2ItemsQuery = `
         {
           organization(login: "${projectData[1]}") {
             projectV2(number: ${projectData[2]}) {
               id
-              items(${itemParams.join(", ")}) {
+              items(first: ${itemNum}${afterQuery}) {
                 totalCount
                 pageInfo {
                   hasNextPage
@@ -87,7 +87,7 @@ async function script(github) {
       pageInfo: { hasNextPage, endCursor },
       nodes
     } = projectV2.items;
-    if (totalCount < 1200 || nodes === void 0 || nodes === null) {
+    if (nodes === void 0 || nodes === null || totalCount < 1200) {
       return;
     }
     for (const item of nodes) {
@@ -104,7 +104,6 @@ async function script(github) {
       if (!content.closed) {
         continue;
       }
-      console.log(content.url);
       const deleteItemFromProjectQuery = `
         mutation {
           deleteProjectV2Item(
@@ -114,6 +113,7 @@ async function script(github) {
           }
         }
         `;
+      console.log(content.url);
       console.log(deleteItemFromProjectQuery);
       console.log(await github.graphql(deleteItemFromProjectQuery));
       return;
