@@ -1,16 +1,29 @@
-module.exports = async ({ github }) => {
-  const projectData = process.env.PROJECT_URL.match(
+import type { GitHub } from "@actions/github/lib/utils";
+import type { Organization } from "@octokit/graphql-schema";
+import { validate } from "@octokit/graphql-schema";
+
+export async function script(github: InstanceType<typeof GitHub>) {
+  const projectURL = process.env.PROJECT_URL;
+
+  if (projectURL === undefined) {
+    throw new Error("PROJECT_URL must set.");
+  }
+
+  const projectData = projectURL.match(
     /https:\/\/github.com\/orgs\/([^/]+)\/projects\/([^/]+)/,
   );
-  let itemCursor;
+
+  if (projectData === null || projectData.length < 3) {
+    throw new Error("PROJECT_URL format is invalid.");
+  }
+
+  let itemCursor: string | undefined = undefined;
 
   for (let i = 0; i < 3; i++) {
-    let itemNum;
+    let itemNum = 10;
 
     if (i === 0) {
       itemNum = 50;
-    } else {
-      itemNum = 10;
     }
 
     let afterQuery = "";
@@ -49,28 +62,56 @@ module.exports = async ({ github }) => {
         }
         `;
     console.log(getProjectV2ItemsQuery);
-    const projectV2Items = await github.graphql(getProjectV2ItemsQuery);
-    const projectV2 = projectV2Items.organization.projectV2;
-    const items = projectV2.items;
+    const getProjectV2ItemsQueryErrors = validate(getProjectV2ItemsQuery);
 
-    if (items.totalCount < 1200) {
+    if (0 < getProjectV2ItemsQueryErrors.length) {
+      throw getProjectV2ItemsQueryErrors[0];
+    }
+
+    const {
+      organization: { projectV2 },
+    } = await github.graphql<{ organization: Organization }>(
+      getProjectV2ItemsQuery,
+    );
+
+    if (projectV2 === undefined || projectV2 === null) {
+      throw new Error("projectV2 must set.");
+    }
+
+    const {
+      totalCount,
+      pageInfo: { hasNextPage, endCursor },
+      nodes,
+    } = projectV2.items;
+
+    if (totalCount < 1200 || nodes === undefined || nodes === null) {
       return;
     }
 
-    const closedItems = items.nodes.filter((v) => v.content.closed);
-
-    if (closedItems.length === 0) {
-      const pageInfo = items.pageInfo;
-      if (pageInfo.hasNextPage) {
-        itemCursor = pageInfo.endCursor;
-        continue;
-      } else {
-        return;
+    for (const item of nodes) {
+      if (item === null) {
+        throw new Error("item must set.");
       }
-    }
 
-    const item = closedItems[0];
-    const deleteItemFromProjectQuery = `
+      const content = item.content;
+
+      if (content === undefined || content === null) {
+        throw new Error("content must set.");
+      }
+
+      if (
+        content.__typename !== "Issue" &&
+        content.__typename !== "PullRequest"
+      ) {
+        throw new Error(`content is invalid type ${content.__typename}.`);
+      }
+
+      if (!content.closed) {
+        continue;
+      }
+
+      console.log(content.url);
+      const deleteItemFromProjectQuery = `
         mutation {
           deleteProjectV2Item(
             input: {projectId: "${projectV2.id}", itemId: "${item.id}"}
@@ -79,9 +120,27 @@ module.exports = async ({ github }) => {
           }
         }
         `;
-    console.log(item.content.url);
-    console.log(deleteItemFromProjectQuery);
-    console.log(await github.graphql(deleteItemFromProjectQuery));
-    return;
+      console.log(deleteItemFromProjectQuery);
+      const deleteItemFromProjectQueryErrors = validate(
+        deleteItemFromProjectQuery,
+      );
+
+      if (0 < deleteItemFromProjectQueryErrors.length) {
+        throw deleteItemFromProjectQueryErrors[0];
+      }
+
+      console.log(await github.graphql(deleteItemFromProjectQuery));
+      return;
+    }
+
+    if (!hasNextPage) {
+      return;
+    }
+
+    if (endCursor === undefined || endCursor === null) {
+      throw new Error("endCursor must set.");
+    }
+
+    itemCursor = endCursor;
   }
-};
+}
