@@ -27,7 +27,21 @@ jobs:
           cache: npm
           node-version-file: .node-version
       - if: github.event_name != 'pull_request' || github.event.action != 'closed'
-        run: bash "${GITHUB_WORKSPACE}/scripts/update_dist/update_dist/build.sh"
+        run: bash "${GITHUB_WORKSPACE}/scripts/update_dist/update_dist/check.sh"
+      - name: Validate
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        if: github.event_name != 'pull_request' || github.event.action != 'closed'
+        with:
+          result-encoding: string
+          script: |
+            const {tsImport} = require('tsx/esm/api')
+            const {script} = await tsImport(
+              './scripts/update_dist/update_dist/validate.ts',
+              process.env.GITHUB_WORKSPACE + '/'
+            )
+            script()
+      - if: github.event_name != 'pull_request' || github.event.action != 'closed'
+        run: npx esbuild --platform=node --bundle --format=cjs --outdir=dist src/remove_prs_and_issues.ts
       - uses: dev-hato/actions-diff-pr-management@e5c78b251a69f44f93b2f1398e06b129bcf151ec # v1.2.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
