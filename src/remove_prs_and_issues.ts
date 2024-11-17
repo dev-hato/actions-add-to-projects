@@ -25,10 +25,10 @@ export async function script(github: InstanceType<typeof GitHub>) {
       itemNum = 50;
     }
 
-    const itemParams = [`first: ${itemNum}`];
+    let afterQuery = "";
 
     if (itemCursor !== undefined) {
-      itemParams.push(`after: "${itemCursor}"`);
+      afterQuery = `, after: "${itemCursor}"`;
     }
 
     const getProjectV2ItemsQuery = `
@@ -36,7 +36,7 @@ export async function script(github: InstanceType<typeof GitHub>) {
           organization(login: "${projectData[1]}") {
             projectV2(number: ${projectData[2]}) {
               id
-              items(${itemParams.join(", ")}) {
+              items(first: ${itemNum}${afterQuery}) {
                 totalCount
                 pageInfo {
                   hasNextPage
@@ -103,7 +103,6 @@ export async function script(github: InstanceType<typeof GitHub>) {
         continue;
       }
 
-      console.log(content.url);
       const deleteItemFromProjectQuery = `
         mutation {
           deleteProjectV2Item(
@@ -113,6 +112,7 @@ export async function script(github: InstanceType<typeof GitHub>) {
           }
         }
         `;
+      console.log(content.url);
       console.log(deleteItemFromProjectQuery);
       console.log(await github.graphql(deleteItemFromProjectQuery));
       return;
