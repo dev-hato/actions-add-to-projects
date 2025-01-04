@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: dev-hato/actions-create-release@4fc75e1244f4dd0461c7a488256feb67e21ee3f2 # v0.0.40
+      - uses: dev-hato/actions-create-release@601f9abf05d3f448100c873cdc764cb7faab5334 # v0.0.41
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
 concurrency:
