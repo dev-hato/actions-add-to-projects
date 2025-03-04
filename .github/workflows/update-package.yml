@@ -29,7 +29,7 @@ jobs:
           cache: npm
           node-version-file: .node-version
       - if: github.event_name != 'pull_request' || github.event.action != 'closed'
-        run: npm install
+        run: bash "${GITHUB_WORKSPACE}/scripts/update_package/update_package/install.sh"
       - uses: dev-hato/actions-diff-pr-management@cea263ca46759ebc8c812b8595be4df129761037 # v2.1.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
