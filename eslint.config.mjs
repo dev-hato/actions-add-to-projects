@@ -1,48 +1,135 @@
-// Import the Super-linter ESLint default config
-import baseConfig from "/action/lib/.automation/eslint.config.mjs";
+// https://github.com/super-linter/super-linter/blob/0d8f7aad449c1dc8ecaf2362684de5d379d2cd7d/TEMPLATES/eslint.config.mjs
+import { defineConfig, globalIgnores } from "eslint/config";
+import n from "eslint-plugin-n";
+import prettier from "eslint-plugin-prettier";
+import globals from "globals";
+import jsoncParser from "jsonc-eslint-parser";
+import typescriptEslint from "@typescript-eslint/eslint-plugin";
+import tsParser from "@typescript-eslint/parser";
+import vueParser from "vue-eslint-parser";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import js from "@eslint/js";
+import { FlatCompat } from "@eslint/eslintrc";
 
-const newVueRules = {
-  // In Vue tests, we have a file that triggers vue/html-indent.
-  // vue/html-indent is auto-fixable, and it's considered a warning in the
-  // default eslint-plugin-vue configuration. Raise the severity to error
-  // because warnings don't make ESLint exit with an error by default.
-  "vue/html-indent": ["error", 2],
-};
-
-const newJsoncRules = {
-  // Enable a fixable rule when linting JSONC files
-  "jsonc/sort-array-values": [
-    "error",
-    {
-      pathPattern: "^BAD$",
-      order: { type: "asc" },
-    },
-  ],
-};
-
-const finalConfig = baseConfig.map((config) => {
-  const isJsoncConfig = config.files?.includes("**/*.jsonc");
-  const isJsonConfig = config.files?.includes("**/*.json");
-  const isVueConfig = config.files?.includes("**/*.vue");
-
-  if (isVueConfig) {
-    return {
-      ...config,
-      rules: {
-        ...config.rules,
-        ...newVueRules,
-      },
-    };
-  } else if (isJsoncConfig || isJsonConfig) {
-    return {
-      ...config,
-      rules: {
-        ...config.rules,
-        ...newJsoncRules,
-      },
-    };
-  }
-  return config;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended,
+  allConfig: js.configs.all,
 });
 
-export default finalConfig;
+export default defineConfig([
+  globalIgnores(["!**/.*", "**/node_modules/.*"]),
+  {
+    extends: compat.extends("eslint:recommended"),
+
+    plugins: {
+      n,
+      prettier,
+    },
+
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.jest,
+        ...globals.node,
+      },
+    },
+  },
+  {
+    files: ["**/*.json"],
+    extends: compat.extends("plugin:jsonc/recommended-with-json"),
+
+    languageOptions: {
+      parser: jsoncParser,
+      ecmaVersion: "latest",
+      sourceType: "script",
+
+      parserOptions: {
+        jsonSyntax: "JSON",
+      },
+    },
+  },
+  {
+    files: ["**/*.jsonc"],
+    extends: compat.extends("plugin:jsonc/recommended-with-jsonc"),
+
+    languageOptions: {
+      parser: jsoncParser,
+      ecmaVersion: "latest",
+      sourceType: "script",
+
+      parserOptions: {
+        jsonSyntax: "JSONC",
+      },
+    },
+  },
+  {
+    files: ["**/*.json5"],
+    extends: compat.extends("plugin:jsonc/recommended-with-json5"),
+
+    languageOptions: {
+      parser: jsoncParser,
+      ecmaVersion: "latest",
+      sourceType: "script",
+
+      parserOptions: {
+        jsonSyntax: "JSON5",
+      },
+    },
+  },
+  {
+    files: ["**/*.js", "**/*.mjs", "**/*.cjs", "**/*.jsx"],
+    extends: compat.extends("plugin:react/recommended"),
+
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+          modules: true,
+        },
+      },
+    },
+  },
+  {
+    files: ["**/*.ts", "**/*.cts", "**/*.mts", "**/*.tsx"],
+
+    extends: compat.extends(
+      "plugin:@typescript-eslint/recommended",
+      "plugin:n/recommended",
+      "plugin:react/recommended",
+      "prettier",
+    ),
+
+    plugins: {
+      "@typescript-eslint": typescriptEslint,
+    },
+
+    languageOptions: {
+      parser: tsParser,
+      ecmaVersion: "latest",
+      sourceType: "module",
+    },
+  },
+  {
+    files: ["**/*.vue"],
+    extends: compat.extends("plugin:vue/recommended"),
+
+    languageOptions: {
+      parser: vueParser,
+      ecmaVersion: "latest",
+      sourceType: "module",
+
+      parserOptions: {
+        ecmaFeatures: {
+          modules: true,
+        },
+      },
+    },
+  },
+]);
