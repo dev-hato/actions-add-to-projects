@@ -6,7 +6,7 @@
   "devDependencies": {
     "@proofdict/textlint-rule-proofdict": "3.1.2",
     "@textlint-ja/textlint-rule-no-insert-dropping-sa": "2.0.1",
-    "esbuild": "0.25.11",
+    "esbuild": "0.25.12",
     "textlint": "15.2.3",
     "textlint-filter-rule-comments": "1.2.2",
     "textlint-rule-abbr-within-parentheses": "1.0.2",
