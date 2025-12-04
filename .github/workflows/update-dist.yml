@@ -29,7 +29,7 @@ jobs:
           node-version-file: .node-version
       - if: github.event_name != 'pull_request' || github.event.action != 'closed'
         run: bash "${GITHUB_WORKSPACE}/scripts/update_dist/update_dist/build.sh"
-      - uses: dev-hato/actions-diff-pr-management@1e2c650446e6a6aab1858d55c8b693470ea5f2fe # v2.2.2
+      - uses: dev-hato/actions-diff-pr-management@9de3de40217217a73ac95f3751d7bfe1c9f23ead # v2.2.3
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           branch-name-prefix: apply-dist
