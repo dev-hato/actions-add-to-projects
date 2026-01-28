@@ -27,9 +27,6 @@
   "engines": {
     "node": "24.13.0"
   },
-  "overrides": {
-    "undici": "^7.0.0"
-  },
   "standard": {
     "ignore": [
       "dist/"
