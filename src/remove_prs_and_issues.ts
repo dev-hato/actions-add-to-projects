@@ -77,7 +77,7 @@ export async function script(github: InstanceType<typeof GitHub>) {
       nodes,
     } = projectV2.items;
 
-    if (nodes === undefined || nodes === null || totalCount < 1200) {
+    if (nodes === undefined || nodes === null || totalCount < 50000) {
       return;
     }
 
