@@ -87,7 +87,7 @@ async function script(github) {
       pageInfo: { hasNextPage, endCursor },
       nodes
     } = projectV2.items;
-    if (nodes === void 0 || nodes === null || totalCount < 1200) {
+    if (nodes === void 0 || nodes === null || totalCount < 5e4) {
       return;
     }
     for (const item of nodes) {
