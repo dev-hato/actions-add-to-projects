@@ -82,7 +82,7 @@ async function script(github) {
     if (projectV2 === void 0 || projectV2 === null) {
       throw new Error("projectV2 must set.");
     }
-    const {
+         const {
       totalCount,
       pageInfo: { hasNextPage, endCursor },
       nodes
