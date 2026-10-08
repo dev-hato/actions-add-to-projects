@@ -24,7 +24,7 @@ jobs:
           private-key: ${{ secrets.PROJECT_AUTOMATION_PRIVATE_KEY }} # zizmor: ignore[secrets-outside-env]
           permission-organization-projects: write
           permission-pull-requests: read
-      - uses: ./
+      - uses: $/
         with:
           github-token: ${{ steps.generate_token.outputs.token }}
           project-url: https://github.com/orgs/dev-hato/projects/1
