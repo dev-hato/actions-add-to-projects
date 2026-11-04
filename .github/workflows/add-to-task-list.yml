@@ -7,9 +7,11 @@ on:
   issues:
     types:
       - opened
-permissions: read-all
+permissions:
+  contents: read
 jobs:
   add-to-task-list:
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     if: github.repository == github.event.pull_request.head.repo.full_name
     steps:
