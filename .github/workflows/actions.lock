@@ -10,7 +10,7 @@ workflows:
         - 'actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3'
     '.github/workflows/create-release.yml':
         - 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1'
-        - 'dev-hato/actions-create-release@3af1d4502c5f308357c7c14cb4436cc3aacbedd3'
+        - 'dev-hato/actions-create-release@03c4598c582878251cc2808a2bb8d89d4d8fbb94'
     '.github/workflows/format-json-yml.yml':
         - 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1'
         - 'actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510'
@@ -66,9 +66,9 @@ dependencies:
         commit: 'sha1-949feb2413d6458794dcd2491c4babbbce0c15c1'
         owner_id: 44036562
         repo_id: 189476904
-    'dev-hato/actions-create-release@3af1d4502c5f308357c7c14cb4436cc3aacbedd3':
-        ref: 'v0.0.58'
-        commit: 'sha1-3af1d4502c5f308357c7c14cb4436cc3aacbedd3'
+    'dev-hato/actions-create-release@03c4598c582878251cc2808a2bb8d89d4d8fbb94':
+        ref: 'v0.0.59'
+        commit: 'sha1-03c4598c582878251cc2808a2bb8d89d4d8fbb94'
         owner_id: 68012105
         repo_id: 512147800
         uses:
