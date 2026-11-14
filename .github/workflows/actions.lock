@@ -4,7 +4,7 @@
 version: 'v0.0.3'
 workflows:
     '.github/workflows/add-to-task-list.yml':
-        - 'actions/add-to-project@5afcf98fcd03f1c2f92c3c83f58ae24323cc57fd'
+        - 'actions/add-to-project@f2c1f1fa649a891be84948ea89b5dfba1526ef05'
         - 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1'
         - 'actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510'
         - 'actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3'
@@ -43,9 +43,9 @@ workflows:
     '.github/workflows/verify-lockfile.yml':
         - 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1'
 dependencies:
-    'actions/add-to-project@5afcf98fcd03f1c2f92c3c83f58ae24323cc57fd':
-        ref: 'v2.0.0'
-        commit: 'sha1-5afcf98fcd03f1c2f92c3c83f58ae24323cc57fd'
+    'actions/add-to-project@f2c1f1fa649a891be84948ea89b5dfba1526ef05':
+        ref: 'v2.0.1'
+        commit: 'sha1-f2c1f1fa649a891be84948ea89b5dfba1526ef05'
         owner_id: 44036562
         repo_id: 454132203
     'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1':
