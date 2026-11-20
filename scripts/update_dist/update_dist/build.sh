@@ -2,5 +2,5 @@
 set -e
 
 npm ci
-tsc --noEmit
+npx --no-install tsc --noEmit
 npx esbuild --platform=node --bundle --format=cjs --outdir=dist src/remove_prs_and_issues.ts
